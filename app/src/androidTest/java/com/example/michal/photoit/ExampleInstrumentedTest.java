@@ -1,4 +1,4 @@
-package com.pwr_multimedia.photo_it;
+package com.example.michal.photoit;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.pwr_multimedia.photo_it", appContext.getPackageName());
+        assertEquals("com.example.michal.photoit", appContext.getPackageName());
     }
 }

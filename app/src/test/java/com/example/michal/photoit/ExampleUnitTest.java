@@ -1,4 +1,4 @@
-package com.pwr_multimedia.photo_it;
+package com.example.michal.photoit;
 
 import org.junit.Test;
 
