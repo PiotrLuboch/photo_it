@@ -24,7 +24,7 @@ public class Filters {
 	
     private static GaussianBlur gb;
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		JFrame frame = new JFrame("Filter test");
 		File img = new File("lena.jpg");
 		BufferedImage image = ImageIO.read(img);
@@ -40,7 +40,7 @@ public class Filters {
 		frame.setSize(image.getWidth(), image.getHeight());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-	}
+	}*/
 
 	
 	public static BufferedImage sepia(BufferedImage img){
