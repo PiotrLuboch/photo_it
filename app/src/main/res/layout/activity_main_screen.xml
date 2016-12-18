@@ -26,6 +26,28 @@
         android:background="@drawable/oval"
         android:layout_marginBottom="39dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/capture"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/btn_video"
+        android:layout_alignBottom="@+id/btn_takePicture"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/btn_video"
+        android:background="@null"
+        android:contentDescription="@string/video"/>
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_video"
+        android:layout_toStartOf="@+id/btn_video"
+        android:id="@+id/chronometer"
+        android:textColor="#ff0000"
+        android:textSize="25sp"
+        android:visibility="invisible"
+        android:contentDescription="@string/chronometer"/>
 
 </RelativeLayout>
