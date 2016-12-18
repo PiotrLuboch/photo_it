@@ -3,6 +3,8 @@ package com.example.michal.photoit;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -186,6 +188,7 @@ public class PhotoCamera extends AppCompatActivity {
     protected void updatePreview() {
 
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+        captureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, CaptureRequest.CONTROL_EFFECT_MODE_SEPIA);
         try {
             cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
         } catch (CameraAccessException e) {
@@ -240,7 +243,9 @@ public class PhotoCamera extends AppCompatActivity {
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
+                        Bitmap bitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                         save(bytes);
+                        
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -374,4 +379,39 @@ public class PhotoCamera extends AppCompatActivity {
         }
     }
 
+    static public void decodeYUV420SP(int[] rgba, byte[] yuv420sp, int width, int height) {
+        final int frameSize = width * height;
+        // define variables before loops (+ 20-30% faster algorithm o0`)
+        int r, g, b, y1192, y, i, uvp, u, v;
+        for (int j = 0, yp = 0; j < height; j++) {
+            uvp = frameSize + (j >> 1) * width;
+            u = 0;
+            v = 0;
+            for (i = 0; i < width; i++, yp++) {
+                y = (0xff & ((int) yuv420sp[yp])) - 16;
+                if (y < 0)
+                    y = 0;
+                if ((i & 1) == 0) {
+                    v = (0xff & yuv420sp[uvp++]) - 128;
+                    u = (0xff & yuv420sp[uvp++]) - 128;
+                }
+
+                y1192 = 1192 * y;
+                r = (y1192 + 1634 * v);
+                g = (y1192 - 833 * v - 400 * u);
+                b = (y1192 + 2066 * u);
+
+                // Java's functions are faster then 'IFs'
+                r = Math.max(0, Math.min(r, 262143));
+                g = Math.max(0, Math.min(g, 262143));
+                b = Math.max(0, Math.min(b, 262143));
+
+                // rgb[yp] = 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) &
+                // 0xff00) | ((b >> 10) & 0xff);
+                // rgba, divide 2^10 ( >> 10)
+                rgba[yp] = ((r << 14) & 0xff000000) | ((g << 6) & 0xff0000)
+                        | ((b >> 2) | 0xff00);
+            }
+        }
+    }
 }
