@@ -8,5 +8,4 @@ import android.graphics.Bitmap;
 
 public interface Filter {
     Bitmap filter(Bitmap src);
-    byte[] filter(byte[] src);
 }
