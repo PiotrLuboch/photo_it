@@ -71,7 +71,14 @@ public class PhotoCamera extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 180);
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
     }
+    private static final SparseIntArray CAMORIENTATIONS = new SparseIntArray();
 
+    static {
+        CAMORIENTATIONS.append(Surface.ROTATION_0, 90);
+        CAMORIENTATIONS.append(Surface.ROTATION_90, 0);
+        CAMORIENTATIONS.append(Surface.ROTATION_180, 270);
+        CAMORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
     @Override
     protected void onResume(){
         super.onResume();
@@ -262,7 +269,7 @@ public class PhotoCamera extends AppCompatActivity {
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, CAMORIENTATIONS.get(rotation));
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
