@@ -3,8 +3,9 @@ package com.example.michal.photoit.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -12,15 +13,15 @@ import java.nio.ByteBuffer;
  */
 
 public class ImageOperations {
-    public Bitmap imageToBitmap(Image image){
+    public Bitmap imageToBitmap(Image image) {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
         buffer.get(bytes);
-        Bitmap bitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         return bitmap;
     }
 
-    public byte[] bitmapToBytes(Bitmap bitmap){
+    public byte[] bitmapToBytes(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
@@ -29,5 +30,20 @@ public class ImageOperations {
         bitmap.copyPixelsToBuffer(byteBuffer);
         byte[] byteArray = byteBuffer.array();
         return byteArray;
+    }
+
+    public Bitmap getBitmap(String path) {
+        try {
+            Bitmap bitmap = null;
+            File f = new File(path);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -41,9 +41,4 @@ public class NegativeFilter implements Filter {
         // return final bitmap
         return bmOut;
     }
-
-    @Override
-    public byte[] filter(byte[] src) {
-        return new byte[0];
-    }
 }

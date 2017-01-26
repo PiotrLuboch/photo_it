@@ -41,6 +41,10 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.michal.photoit.filtering.Filter;
+import com.example.michal.photoit.filtering.NegativeFilter;
+import com.example.michal.photoit.util.ImageOperations;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -297,6 +301,26 @@ public class PhotoCamera extends AppCompatActivity {
                     } finally {
                         if (image != null) {
                             image.close();
+                        }
+                    }
+                    ImageOperations imgOperations = new ImageOperations();
+                    Bitmap bmp = imgOperations.getBitmap(mImageFileName);
+                    Filter f = new NegativeFilter();
+                    Bitmap filteredBitmap = f.filter(bmp);
+                    FileOutputStream out = null;
+                    try {
+                        out = new FileOutputStream(mImageFileName+"negative.png");
+                        filteredBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                        // PNG is a lossless format, the compression factor (100) is ignored
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (out != null) {
+                                out.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
