@@ -2,6 +2,7 @@ package com.example.michal.photoit;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -280,6 +281,11 @@ public class PhotoCamera extends AppCompatActivity {
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
+                        DisplayImage disp = new DisplayImage(bytes);
+                        Intent myIntent = new Intent(getApplicationContext(), disp.getClass());
+                        myIntent.putExtra("image", bytes);
+                        startActivity(myIntent);
+
                        //Converting to bitmap?
                         // Bitmap bitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                         save(bytes);
