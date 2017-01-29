@@ -160,9 +160,9 @@ public class PhotoIt implements Runnable {
                 if (takePicture){
                 	
 	                Date date = new Date();
-	                String fileName = Long.toString(date.getTime())+".jpg";
+	                String fileName = Long.toString(date.getTime())+".png";
 	                try {
-						ImageIO.write(image,"jpg",new File(fileName));
+						ImageIO.write(image,"png",new File(fileName));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
