@@ -3,7 +3,6 @@ package com.example.michal.photoit;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +17,14 @@ import com.example.michal.photoit.filtering.GrayFilter;
 import com.example.michal.photoit.filtering.Moustache;
 import com.example.michal.photoit.filtering.NegativeFilter;
 import com.example.michal.photoit.filtering.SepiaFilter;
-import com.example.michal.photoit.util.ImageOperations;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DisplayImage extends AppCompatActivity {
 
@@ -34,7 +34,7 @@ public class DisplayImage extends AppCompatActivity {
     private String mImageFileName;
     private File mImageFolder;
     Bitmap image;
-    Bitmap previous;
+    List<Bitmap> previous;
 
     public DisplayImage(){}
     private boolean isMoustache;
@@ -49,6 +49,7 @@ public class DisplayImage extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         this.bytes = b.getByteArray("image");
         isMoustache=false;
+        final ArrayList<Bitmap> previous = new ArrayList<Bitmap>(0);
 
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         image=bitmap;
@@ -66,8 +67,10 @@ public class DisplayImage extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                image=previous;
-                back.setVisibility(View.GONE);
+                image=previous.get(previous.size()-1);
+                previous.remove(previous.size()-1);
+                if (previous.size()==0)
+                    back.setVisibility(View.GONE);
                 view.setImageBitmap(image);
 
             }
@@ -79,7 +82,7 @@ public class DisplayImage extends AppCompatActivity {
             public void onClick(View v) {
                 NegativeFilter neg = new NegativeFilter();
                 back.setVisibility(View.VISIBLE);
-                previous=image;
+                previous.add(image);
                 image=neg.filter(image);
                 view.setImageBitmap(image);
 
@@ -90,7 +93,7 @@ public class DisplayImage extends AppCompatActivity {
             public void onClick(View v) {
                 SepiaFilter sep = new SepiaFilter();
                 back.setVisibility(View.VISIBLE);
-                previous=image;
+                previous.add(image);
                 image=sep.filter(image);
                 view.setImageBitmap(image);
 
@@ -112,7 +115,7 @@ public class DisplayImage extends AppCompatActivity {
             public void onClick(View v) {
                 GrayFilter gray = new GrayFilter();
                 back.setVisibility(View.VISIBLE);
-                previous=image;
+                previous.add(image);
                 image=gray.filter(image);
                 view.setImageBitmap(image);
 
@@ -131,7 +134,7 @@ public class DisplayImage extends AppCompatActivity {
 
                     Moustache moustache = new Moustache(getApplicationContext(), view, bitmap, cords);
                     back.setVisibility(View.VISIBLE);
-                    previous=image;
+                    previous.add(image);
                     image=moustache.filter(image);
                     view.setImageBitmap(image);
                     isMoustache=false;
