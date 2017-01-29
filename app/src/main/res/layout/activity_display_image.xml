@@ -66,4 +66,14 @@
         android:layout_marginEnd="28dp"
         android:layout_alignBottom="@+id/sepia" />
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_revert"
+        android:background="@null"
+        android:id="@+id/back"
+        android:layout_alignBottom="@+id/save"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="13dp" />
+
 </RelativeLayout>
