@@ -1,9 +1,18 @@
 import org.bytedeco.javacv.*;
 import org.bytedeco.javacv.FrameGrabber.Exception;
+import org.bytedeco.javacv.OpenCVFrameConverter.ToIplImage;
+
+import static org.bytedeco.javacpp.opencv_core.cvFlip;
+import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 
 import static org.bytedeco.javacpp.opencv_core.IplImage;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,6 +21,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
+import java.awt.Image;
 
 
 public class PhotoIt implements Runnable {
@@ -23,6 +34,7 @@ public class PhotoIt implements Runnable {
 	int height;
 	JPanel grid;
 	JPanel choicePanel;
+
 	boolean isGray, isSepia, isS, isNegative;
 	private final JButton btnSepia = new JButton("Sepia");
     public PhotoIt() throws Exception {
@@ -36,7 +48,6 @@ public class PhotoIt implements Runnable {
 		
         choicePanel = new JPanel();
 		mainFrame.getContentPane().setLayout(null);
-   	
 		
 		mainFrame.getContentPane().add(grid);
 		
@@ -96,14 +107,28 @@ public class PhotoIt implements Runnable {
 						isS=false;
 					}
 				});
+				
+				JButton takePhoto = new JButton("Take Photo");
+				choicePanel.add(takePhoto);
+				takePhoto.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						takePicture=true;
+		                
+
+					}
+				});
 		mainFrame.setVisible(true);
     }
 
+    OpenCVFrameConverter.ToIplImage converter ;
+    IplImage img;
+    BufferedImage image;
+    Frame frame;
+    boolean takePicture=false;
     public void run() {
     	
-        OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-        IplImage img;
-        BufferedImage image;
+        converter = new OpenCVFrameConverter.ToIplImage();
         try {
             grabber.start();
             width=grabber.getImageWidth();
@@ -112,7 +137,7 @@ public class PhotoIt implements Runnable {
             grid.setBounds(10, 20, width, height);
             choicePanel.setBounds(width+30, 20, 120, height);
             while (true) {
-                Frame frame = grabber.grab();
+                frame = grabber.grab();
                // System.out.println("Width: "+frame.imageWidth);
                 //System.out.println("Height: "+frame.imageHeight);
                 
@@ -130,8 +155,21 @@ public class PhotoIt implements Runnable {
                 }
                 else if (isS){
                 	image=Filters.Sfunction(image, 10);
-                }
+                }          
                 
+                if (takePicture){
+                	
+	                Date date = new Date();
+	                String fileName = Long.toString(date.getTime())+".jpg";
+	                try {
+						ImageIO.write(image,"jpg",new File(fileName));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+	                takePicture=false;
+                }
                 ImageIcon icon = new ImageIcon(image); 
 
                 preview.setIcon(icon);
@@ -158,5 +196,32 @@ public class PhotoIt implements Runnable {
         Java2DFrameConverter paintConverter = new Java2DFrameConverter();
         Frame frame = grabberConverter.convert(src);
         return paintConverter.getBufferedImage(frame,1);
+    }
+    
+    IplImage toIplImage(BufferedImage bufImage) {
+
+        ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
+        Java2DFrameConverter java2dConverter = new Java2DFrameConverter();
+        IplImage iplImage = iplConverter.convert(java2dConverter.convert(bufImage));
+        return iplImage;
+    }
+    
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
     }
 }
