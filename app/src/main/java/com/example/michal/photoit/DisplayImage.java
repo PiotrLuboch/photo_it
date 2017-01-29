@@ -3,10 +3,12 @@ package com.example.michal.photoit;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ public class DisplayImage extends AppCompatActivity {
     private File mImageFolder;
     Bitmap image;
     public DisplayImage(){}
+    private boolean isMoustache;
 
     public DisplayImage(byte[] bytes){
         this.bytes = bytes;
@@ -43,7 +46,7 @@ public class DisplayImage extends AppCompatActivity {
         setContentView(R.layout.activity_display_image);
         Bundle b = getIntent().getExtras();
         this.bytes = b.getByteArray("image");
-
+        isMoustache=false;
 
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
          view = (ImageView) findViewById(R.id.imageView);
@@ -77,9 +80,11 @@ public class DisplayImage extends AppCompatActivity {
         moustache.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Moustache moustache = new Moustache(getApplicationContext(), view, bitmap);
-                image=moustache.filter(bitmap);
-                view.setImageBitmap(image);
+              //  Moustache moustache = new Moustache(getApplicationContext(), view, bitmap);
+               // image=moustache.filter(bitmap);
+                //view.setImageBitmap(image);
+                isMoustache=true;
+                Toast.makeText(getApplicationContext(), "Select place", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -93,6 +98,24 @@ public class DisplayImage extends AppCompatActivity {
             }
         });
 
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isMoustache) {
+                    int[] viewCoords = new int[2];
+                    view.getLocationOnScreen(viewCoords);
+
+                    final int index = event.getActionIndex();
+                    final float[] cords = new float[]{event.getX(index), event.getY(index)};
+
+                    Moustache moustache = new Moustache(getApplicationContext(), view, bitmap, cords);
+                    image=moustache.filter(bitmap);
+                    view.setImageBitmap(image);
+                    isMoustache=false;
+                }
+                return true;
+            }
+        });
 
 
         save.setOnClickListener(new View.OnClickListener() {

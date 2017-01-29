@@ -62,12 +62,19 @@ public class Moustache implements Filter {
     Context context;
     ImageView view;
     Bitmap source;
-    boolean exit;
+    float[] cords;
     public Moustache(){};
     public Moustache(Context context, ImageView view, Bitmap source){
         this.context = context;
         this.view=view;
         this.source=source;
+
+    }
+    public Moustache(Context context, ImageView view, Bitmap source, float[] cords){
+        this.context = context;
+        this.view=view;
+        this.source=source;
+        this.cords=cords;
 
     }
 
@@ -82,7 +89,8 @@ public class Moustache implements Filter {
         Canvas canvas = new Canvas(bmOverlay);
 
         canvas.drawBitmap(src, new Matrix(), null);
-        canvas.drawBitmap(bmp2, (src.getWidth()/2)- bmp2.getWidth()/2, (src.getHeight()/2)-bmp2.getHeight()/2, null);
+       // canvas.drawBitmap(bmp2, (src.getWidth()/2)- bmp2.getWidth()/2, (src.getHeight()/2)-bmp2.getHeight()/2, null);
+        canvas.drawBitmap(bmp2, cords[0],cords[1],null);
         return bmOverlay;
     }
 
