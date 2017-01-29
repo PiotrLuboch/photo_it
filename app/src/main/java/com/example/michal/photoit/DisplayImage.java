@@ -1,7 +1,9 @@
 package com.example.michal.photoit;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -118,6 +120,10 @@ public class DisplayImage extends AppCompatActivity {
             output = new FileOutputStream(mImageFileName);
             image.compress(Bitmap.CompressFormat.PNG, 100, output); // bmp is your Bitmap instance
             Toast.makeText(getApplicationContext(), "Image saved in:"+mImageFileName, Toast.LENGTH_SHORT).show();
+
+            Intent mediaStoreUpdateIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaStoreUpdateIntent.setData(Uri.fromFile(new File(mImageFileName)));
+            sendBroadcast(mediaStoreUpdateIntent);
         } finally {
             if (null != output) {
                 output.close();
