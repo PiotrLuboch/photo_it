@@ -238,26 +238,10 @@ public class PhotoCamera extends AppCompatActivity {
         }
     }
 
-    private File createImageFileName() throws IOException {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String prepend = "IMAGE_"+timestamp;
-        File imageFile = File.createTempFile(prepend, ".jpg", mImageFolder);
 
-        mImageFileName = imageFile.getAbsolutePath();
-        return imageFile;
-    }
 
-    private void createImageFolder(){
-        File imageFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        mImageFolder = new File(imageFile,"PhotoIt!");
 
-        if (!mImageFolder.exists()){
-            mImageFolder.mkdirs();
-        }
-    }
 
-    private String mImageFileName;
-    private File mImageFolder;
 
     protected void takePicture() {
         if (cameraDevice==null){
@@ -292,18 +276,18 @@ public class PhotoCamera extends AppCompatActivity {
 
                        //Converting to bitmap?
                         // Bitmap bitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                        save(bytes);
+                        //save(bytes);
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    //} catch (FileNotFoundException e) {
+                      //  e.printStackTrace();
+                    //} catch (IOException e) {
+                      //  e.printStackTrace();
                     } finally {
                         if (image != null) {
                             image.close();
                         }
                     }
-                    ImageOperations imgOperations = new ImageOperations();
+                    /*ImageOperations imgOperations = new ImageOperations();
                     Bitmap bmp = imgOperations.getBitmap(mImageFileName);
                     Filter f = new NegativeFilter();
                     Bitmap filteredBitmap = f.filter(bmp);
@@ -322,19 +306,9 @@ public class PhotoCamera extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
+                    }*/
                 }
-                private void save(byte[] bytes) throws IOException {
-                    FileOutputStream output = null;
-                    try {
-                        output = new FileOutputStream(mImageFileName);
-                        output.write(bytes);
-                    } finally {
-                        if (null != output) {
-                            output.close();
-                        }
-                    }
-                }
+
             };
 
             reader.setOnImageAvailableListener(readerListener, null);
@@ -342,13 +316,13 @@ public class PhotoCamera extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    try {
+                    /*try {
                         createImageFileName();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     Toast.makeText(PhotoCamera.this, "Saved:" + mImageFileName, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
+                    createCameraPreview();*/
                 }
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -375,7 +349,7 @@ public class PhotoCamera extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-        createImageFolder();
+      //  createImageFolder();
 
         mediaRecorder = new MediaRecorder();
 
