@@ -2,14 +2,11 @@ import org.bytedeco.javacv.*;
 import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.javacv.OpenCVFrameConverter.ToIplImage;
 
-import static org.bytedeco.javacpp.opencv_core.cvFlip;
-import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 
 import static org.bytedeco.javacpp.opencv_core.IplImage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -17,6 +14,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,8 +34,10 @@ public class PhotoIt implements Runnable {
 	int height;
 	JPanel grid;
 	JPanel choicePanel;
-
-	boolean isGray, isSepia, isS, isNegative;
+	JSlider slider;
+	JLabel rad;
+	int radius;
+	boolean isGray, isSepia, isS, isNegative, isBlur,isSharp;
 	private final JButton btnSepia = new JButton("Sepia");
     public PhotoIt() throws Exception {
 		grabber = FrameGrabber.createDefault(0);
@@ -47,12 +49,13 @@ public class PhotoIt implements Runnable {
 
 		
         choicePanel = new JPanel();
+        slider = new JSlider(1,20,5);
 		mainFrame.getContentPane().setLayout(null);
-		
+
 		mainFrame.getContentPane().add(grid);
 		
 		mainFrame.getContentPane().add(choicePanel);
-		
+				radius=5;
 				JButton btnGrayScale = new JButton("Gray scale");
 				btnGrayScale.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -60,6 +63,8 @@ public class PhotoIt implements Runnable {
 						isGray=true;
 						isNegative=false;
 						isS=false;
+						isBlur=false;
+						isSharp=false;
 					}
 				});
 				
@@ -70,6 +75,8 @@ public class PhotoIt implements Runnable {
 						isGray=false;
 						isNegative=false;
 						isS=false;
+						isBlur=false;
+						isSharp=false;
 					}
 				});
 				
@@ -80,6 +87,8 @@ public class PhotoIt implements Runnable {
 						isGray=false;
 						isNegative=true;
 						isS=false;
+						isBlur=false;
+						isSharp=false;
 					}
 				});
 				
@@ -90,15 +99,51 @@ public class PhotoIt implements Runnable {
 						isGray=false;
 						isNegative=false;
 						isS=true;
+						isBlur=false;
+						isSharp=false;
 					}
 				});
 				
-				choicePanel.add(btnS);
-				choicePanel.add(btnNegative);
+				JButton btnBlur = new JButton("Gaussian Blur");
+				btnBlur.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						isSepia=false;
+						isGray=false;
+						isNegative=false;
+						isS=false;
+						isBlur=true;
+						isSharp=false;
+					}
+				});
+				JButton btnSharp = new JButton("Unsharp mask");
+				btnSharp.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						isSepia=false;
+						isGray=false;
+						isNegative=false;
+						isS=false;
+						isBlur=false;
+						isSharp=true;
+					}
+				});
+				
 				choicePanel.add(btnNormal);
+				choicePanel.add(btnNegative);
 				choicePanel.add(btnGrayScale);
 				choicePanel.add(btnSepia);
+				choicePanel.add(btnS);
+				choicePanel.add(btnBlur);
+				choicePanel.add(btnSharp);
 				
+				choicePanel.add(slider);
+				rad=new JLabel("Radius= "+Integer.toString(radius));
+				choicePanel.add(rad);
+				slider.addChangeListener(new ChangeListener(){
+					 public void stateChanged(ChangeEvent event) {
+						 radius = slider.getValue();
+						 rad.setText("Radius"+Integer.toString(radius));
+					 }
+				});
 				btnSepia.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						isSepia=true;
@@ -154,17 +199,21 @@ public class PhotoIt implements Runnable {
                 	image=Filters.negative(image);
                 }
                 else if (isS){
-                	image=Filters.Sfunction(image, 10);
+                	image=Filters.Sfunction(image, radius);
                 }          
-                
+                else if (isBlur){
+                	image=Filters.blur(image, radius);
+                }
+                else if (isSharp){
+                	image=Filters.unsharp(image, radius);
+                }
                 if (takePicture){
                 	
 	                Date date = new Date();
-	                String fileName = Long.toString(date.getTime())+".png";
+	                String fileName = Long.toString(date.getTime())+".pgn";
 	                try {
 						ImageIO.write(image,"png",new File(fileName));
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
