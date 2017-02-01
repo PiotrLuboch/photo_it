@@ -10,7 +10,7 @@ import android.graphics.Color;
 public final class SepiaFilter implements Filter {
     @Override
     public Bitmap filter(Bitmap src) {
-        int depth = 20;
+        int depth = 10;
         // create new bitmap with the same settings as source bitmap
         Bitmap bmOut = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
         // color info

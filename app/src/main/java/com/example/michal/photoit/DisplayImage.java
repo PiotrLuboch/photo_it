@@ -1,5 +1,7 @@
 package com.example.michal.photoit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import com.example.michal.photoit.filtering.GrayFilter;
 import com.example.michal.photoit.filtering.Moustache;
 import com.example.michal.photoit.filtering.NegativeFilter;
 import com.example.michal.photoit.filtering.SepiaFilter;
+import com.example.michal.photoit.filtering.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,6 +42,9 @@ public class DisplayImage extends AppCompatActivity {
 
     public DisplayImage(){}
     private boolean isMoustache;
+    private boolean isText;
+
+    private String text;
 
     public DisplayImage(byte[] bytes){
         this.bytes = bytes;
@@ -49,18 +56,21 @@ public class DisplayImage extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         this.bytes = b.getByteArray("image");
         isMoustache=false;
+        isText=false;
         final ArrayList<Bitmap> previous = new ArrayList<Bitmap>(0);
 
         final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         image=bitmap;
-         view = (ImageView) findViewById(R.id.imageView);
-       // NegativeFilter neg = new NegativeFilter();
+        view = (ImageView) findViewById(R.id.imageView);
+        // NegativeFilter neg = new NegativeFilter();
         //bitmap=neg.filter(bitmap);
         view.setImageBitmap(bitmap);
         ImageButton negative = (ImageButton) findViewById(R.id.negative);
         ImageButton gray = (ImageButton) findViewById(R.id.gray);
         ImageButton sepia = (ImageButton) findViewById(R.id.sepia);
+        ImageButton insertText = (ImageButton) findViewById(R.id.insertText);
         final ImageButton back = (ImageButton) findViewById(R.id.back);
+        back.setVisibility(View.GONE);
         final ImageButton save = (ImageButton) findViewById(R.id.save);
         ImageButton moustache = (ImageButton) findViewById(R.id.moustache);
 
@@ -73,6 +83,36 @@ public class DisplayImage extends AppCompatActivity {
                     back.setVisibility(View.GONE);
                 view.setImageBitmap(image);
 
+            }
+        });
+
+
+        insertText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isText=true;
+                final AlertDialog.Builder alert = new AlertDialog.Builder(DisplayImage.this);
+
+                final EditText edittext = new EditText(getApplicationContext());
+                alert.setMessage("Type your text here:");
+                alert.setTitle("Text tool");
+
+                alert.setView(edittext);
+
+                alert.setPositiveButton("Set Text", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        text = edittext.getText().toString();
+                        Toast.makeText(DisplayImage.this,text+": Select place.",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                alert.show();
             }
         });
 
@@ -102,8 +142,8 @@ public class DisplayImage extends AppCompatActivity {
         moustache.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  Moustache moustache = new Moustache(getApplicationContext(), view, bitmap);
-               // image=moustache.filter(bitmap);
+                //  Moustache moustache = new Moustache(getApplicationContext(), view, bitmap);
+                // image=moustache.filter(bitmap);
                 //view.setImageBitmap(image);
                 isMoustache=true;
                 Toast.makeText(getApplicationContext(), "Select place", Toast.LENGTH_SHORT).show();
@@ -125,20 +165,30 @@ public class DisplayImage extends AppCompatActivity {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                int[] viewCoords = new int[2];
+                view.getLocationOnScreen(viewCoords);
+
+                final int index = event.getActionIndex();
+                final float[] cords = new float[]{event.getX(index), event.getY(index)};
+
                 if (isMoustache) {
-                    int[] viewCoords = new int[2];
-                    view.getLocationOnScreen(viewCoords);
-
-                    final int index = event.getActionIndex();
-                    final float[] cords = new float[]{event.getX(index), event.getY(index)};
-
                     Moustache moustache = new Moustache(getApplicationContext(), view, bitmap, cords);
                     back.setVisibility(View.VISIBLE);
                     previous.add(image);
                     image=moustache.filter(image);
-                    view.setImageBitmap(image);
                     isMoustache=false;
                 }
+                if (isText){
+
+                    Text doText = new Text();
+
+                    back.setVisibility(View.VISIBLE);
+                    previous.add(image);
+                    image=doText.filter(image, cords, text);
+                    isText=false;
+                }
+                view.setImageBitmap(image);
+
                 return true;
             }
         });

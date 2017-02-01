@@ -16,55 +16,18 @@
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/gallery_thumb"
         android:id="@+id/imageView"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="41dp"
-        android:layout_marginBottom="30dp"
-        android:id="@+id/negative" />
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/negative"
+        android:layout_alignParentStart="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_save"
+        android:id="@+id/save"
+        android:background="@null"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/save" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:id="@+id/gray"
-        android:layout_alignTop="@+id/negative"
-        android:layout_toEndOf="@+id/negative" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:id="@+id/sepia"
-        android:layout_alignTop="@+id/gray"
-        android:layout_toEndOf="@+id/gray"
-        android:layout_marginStart="15dp" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/moustache"
-        android:id="@+id/moustache"
-        android:layout_alignTop="@+id/sepia"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp"
-        android:layout_alignBottom="@+id/sepia" />
+        android:layout_alignParentEnd="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -72,8 +35,54 @@
         app:srcCompat="@android:drawable/ic_menu_revert"
         android:background="@null"
         android:id="@+id/back"
-        android:layout_alignBottom="@+id/save"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="13dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/text"
+        android:layout_above="@+id/negative"
+        android:layout_toEndOf="@+id/back"
+        android:id="@+id/insertText"
+        android:background="@null" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/inverse"
+        android:id="@+id/negative"
+        android:layout_marginBottom="11dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/insertText"
+        android:background="@null" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/gray"
+        android:id="@+id/gray"
+        android:background="@android:color/darker_gray"
+        android:layout_marginStart="40dp"
+        android:layout_below="@+id/insertText"
+        android:layout_toEndOf="@+id/negative" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/sepia"
+        android:id="@+id/sepia"
+        android:background="@android:color/holo_orange_light"
+        android:layout_marginEnd="21dp"
+        android:layout_alignTop="@+id/gray"
+        android:layout_toStartOf="@+id/moustache" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/moustache"
+        android:id="@+id/moustache"
+        android:layout_alignTop="@+id/sepia"
+        android:layout_toStartOf="@+id/save" />
 
 </RelativeLayout>
